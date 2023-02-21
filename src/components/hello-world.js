@@ -1,5 +1,5 @@
-class HelloWorld extends HTMLElement {
-  constructor() {
+class HelloWorld extends window.HTMLElement {
+  constructor () {
     super()
 
     this.button = this.querySelector('button')
@@ -12,4 +12,4 @@ class HelloWorld extends HTMLElement {
   }
 }
 
-customElements.define('hello-world', HelloWorld)
+window.customElements.define('hello-world', HelloWorld)
