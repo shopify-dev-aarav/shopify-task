@@ -4,15 +4,10 @@
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	"features": {
 		"ghcr.io/devcontainers/features/ruby:1": {},
-    	"ghcr.io/devcontainers/features/github-cli:1": {}
+    		"ghcr.io/devcontainers/features/github-cli:1": {},
+		"ghcr.io/devcontainers-contrib/features/pnpm:2": {}
 	},
-	"customizations": {
-		"vscode": {
-			"extensions": [
-				"shopify.theme-check-vscode"
-			]
-		}
-	},
+	
 	"forwardPorts": [9292, 5173],
 	"portsAttributes": {
 		"9292": {
