@@ -1,4 +1,4 @@
-class HelloWorld extends window.HTMLElement {
+export default class HelloWorld extends window.HTMLElement {
   constructor () {
     super()
 

@@ -1,2 +1,4 @@
-// Same as './src/components/hello-world.js'
-import '@/components/hello-world'
+import HelloWorld from '../hello-world'
+
+window.customElements.define('hello-world', HelloWorld)
+
