@@ -1,6 +1,20 @@
 {
-  "current": {},
+  "current": {
+    "sections": {
+      "nav": {
+        "type": "nav",
+        "settings": {
+          "choose_collection_page_link": "frontpage",
+          "choose_product_link": "bourge-womens-micam-z51-running-shoes"
+        }
+      }
+    },
+    "content_for_index": [
+
+    ]
+  },
   "presets": {
-    "Default": {}
+    "Default": {
+    }
   }
 }
