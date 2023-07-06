@@ -1,0 +1,11 @@
+
+{% if product.available and product.variants.size > 1 %}
+  {% for option in product.options %}
+    <div  >
+        {% render 'swatch' with option %}
+    </div>
+     
+  {% endfor %}
+{% endif %}
+<input type="hidden" class="variantIdATC" name="id" value="{{product.selected_or_first_available_variant.id}}">
+

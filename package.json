@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "adastra dev",
+    "dev": "adastra dev -s demostore333ak.myshopify.com",
     "build": "adastra build",
     "preview": "adastra preview",
     "check": "adastra check"

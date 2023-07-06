@@ -1,0 +1,17 @@
+{% comment %}
+Renders a product price
+
+Accepts:- product: {Object} Product Liquid object (optional)
+
+
+Usage:
+{% render 'price', product: product %}
+{% endcomment %}
+<div class="price">
+  <div class="price__regular">
+     <span class="price-item ">
+      {% if product.price_varies %}Starting from{% endif %}
+      {{ product.price_min | money }}
+    </span>
+  </div>
+</div>

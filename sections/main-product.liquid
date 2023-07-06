@@ -1,0 +1,278 @@
+<section
+  id="MainProduct-{{ section.id }}"
+  class="section-{{ section.id }}"
+  data-section="{{ section.id }}"
+>
+<script defer="defer">
+  // product varient and details
+  document.addEventListener('DOMContentLoaded',function(){
+    class ProductListing extends HTMLElement {
+
+  constructor() {
+    super()
+    this.selectors = {
+      productTemplate: "#main-product-grid",
+      productImages: ".product-images-wrapper",
+      productSku: ".product__sku",
+      productPrice: ".product-price-js",
+      optionSelectors: ".swatch-option",
+      addToCartButton: "[data-role='addToCart']",
+      productForm: "[data-role='product-form']",
+      productData: "[data-role='product-data']",
+      btnIncrement: "[data-role='increment']",
+      quantityInput: "[data-role='quantity']",
+      btnDecrement: "[data-role='decrement']",
+      variantSelector: "[data-role='variant-selector']"
+    },
+    
+    this.productImages = document.querySelector(
+      `${this.selectors.productImages}`,
+    );
+    this.productTemplate = document.querySelector(
+      `${this.selectors.productTemplate}`,
+    );
+   
+   
+    this.productPrice = this.productTemplate?.querySelector(
+      `${this.selectors.productPrice}`
+    );
+    this.productSku = this.productTemplate?.querySelector(
+      `${this.selectors.productSku}`
+    );
+    this.optionSelectors = document.querySelectorAll(
+      `${this.selectors.optionSelectors}`
+    );
+    this.addToCartButton = this.productTemplate?.querySelector(
+      `${this.selectors.addToCartButton}`
+    );
+    this.productForm = this.productTemplate?.querySelector(
+      `${this.selectors.productForm}`
+    );
+    this.productData = this.productTemplate
+      ? JSON.parse(
+          this.productTemplate?.querySelector(`${this.selectors.productData}`)
+            .textContent,
+        )
+      : "";
+    this.btnDecrement = this.productTemplate?.querySelector(
+      `${this.selectors.btnDecrement}`
+    );
+    this.btnIncrement = this.productTemplate?.querySelector(
+      `${this.selectors.btnIncrement}`
+    );
+    this.quantityInput = this.productTemplate?.querySelector(
+      `${this.selectors.quantityInput}`
+    );
+      
+      console.log(this.selectors.optionSelectors,this.optionSelectors)
+      if (!this.productTemplate) 
+        return;
+
+      Array.from(this.optionSelectors).forEach(function(el, ind) {
+        el.addEventListener("change", this.updateVariant.bind(this, el));
+      }, this);
+      
+    
+
+  }
+  updateVariant(el) {
+
+// alert('varient changed')
+    console.log(this.optionSelectors);
+    let selectedOptions = Array.from(this.optionSelectors).filter((option) => option.checked).map((option) => option.value);
+    console.log("selectedOptions :", this.selectedOptions);
+    console.log("this.productData :", this.productData);
+    this.selectedOptionData = this.productData.filter((data) => data.options.length == selectedOptions.length && data.options.every((option) => selectedOptions.indexOf(option) != -1),)[0];
+    console.log("selectedOptionData :", this.selectedOptionData);
+    let url = window.location.pathname + `?variant=${
+      this.selectedOptionData.id
+    }`;
+    let variantInput = this.productForm.querySelector("input[name='id']");
+    variantInput.value = this.selectedOptionData.id;
+    window.history.pushState({}, "", url);
+    this.updateProductUi();
+
+  }
+  async updateProductUi() {
+    let sectionUrl = window.location.href + `${
+      window.location.href.includes("?")
+        ? "&"
+        : "?"
+      }sections=${
+      this.productTemplate.dataset.id
+    }`;
+    let data = await fetch(sectionUrl).then((res) => res.json());
+    let parser = new DOMParser();
+    let html = parser.parseFromString(data[this.productTemplate.dataset.id], "text/html",);
+    this.productPrice
+      ? (this.productPrice.innerHTML = html.querySelector(`${
+        this.selectors.productPrice
+      }`,).innerHTML)
+      : "";
+    this.productSku
+      ? (this.productSku.innerHTML = html.querySelector(`${
+        this.selectors.productSku
+      }`,) ?. innerHTML)
+      : "";
+
+    this.productImages
+      ? (this.productImages.innerHTML = html.querySelector(`${
+        this.selectors.productImages
+      }`,) ?. innerHTML)
+      : "";
+
+    this.selectedOptionData.available
+      ? this.addToCartButton.classList.remove("soldOut")
+      : this.addToCartButton.classList.add("soldOut");
+    !this.selectedOptionData.available
+      ? this.addToCartButton.setAttribute("disabled", "true")
+      : this.addToCartButton.removeAttribute("disabled");
+    initSlider();
+  }
+}
+customElements.define('product-listing', ProductListing);
+  })
+ document.addEventListener('click',function(e){
+    if(e.target.classList.contains("quantity__button") || e.target.closest(".quantity__button")){
+        let el = e.target.classList.contains("quantity__button") ? e.target : e.target.closest(".quantity__button");
+        let qnInput = document.querySelector('.quantity__input');
+        let currentVal = Number(qnInput.value);
+        if(el.dataset.role == 'decrement' && currentVal > 1){
+            let newVal = currentVal - 1;
+            qnInput.value = newVal;
+        }else if(el.dataset.role == 'increment'){
+            let newVal = currentVal + 1;
+            qnInput.value = newVal;
+        }
+    }
+ })
+</script>
+<product-listing> 
+    {% assign variant_images = product.images | where: 'alt', product.selected_or_first_available_variant.option1 | map: 'src' %}
+
+  <div id="main-product-grid" data-id="{{ section.id }}" class="product-wrapper">
+    
+    <div class="grid__item product-images-wrapper">
+        <div class="product-main-gallery">
+            {% for image in variant_images %}
+                <img src="{{image.src | img_url:'master'}}" alt="{{image.alt}}">
+            {% endfor %}
+        </div>
+        <div class="product-gallery-thumbnil">
+            {% for image in variant_images %}
+                <img src="{{image.src | img_url:'100x'}}" alt="{{image.alt}}">
+            {% endfor %}
+        </div>
+     
+    </div>
+    <div data-role='product-form'  class="product__info-wrapper grid__item">
+      <div
+        id="ProductInfo-{{ section.id }}"
+        data-section="{{ section.id }}"
+        data-url="{{ product.url }}"
+        class="product__info-container"
+      >
+        
+        <div class="product__title" >
+            
+            <a href="{{ product.url }}" class="product__title">
+              <h2 class="h1">
+                {{ product.title | escape }}
+              </h2>
+            </a>
+          </div>
+          <div class="no-js-hidden" id="price-{{ section.id }}" >
+            
+          <span class="product-price-js">
+            {{product.selected_or_first_available_variant.price | money}}
+          </span>
+          <span class="product-compare-price-js" style="text-decoration: line-through;">{% if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price %}
+            {{product.selected_or_first_available_variant.compare_at_price | money }}
+        {% endif   %}</span>
+          </div>
+          <div class="product__description rte quick-add-hidden" >
+            {{ product.description }}
+          </div>
+          
+          <p class="product__sku"
+        id="Sku-{{ section.id }}" role="status" data-role='sku'>
+        <span class="">{{ 'products.product.sku' | t }}:</span> {{- product.selected_or_first_available_variant.sku -}}
+      </p>
+      
+              {% render 'product-variant-picker', product:product %}
+
+              <div
+                id="Quantity-Form-{{ section.id }}"
+                class="product-form__input product-form__quantity"
+                
+              >
+                {% comment %} TODO: enable theme-check once `item_count_for_variant` is accepted as valid filter {% endcomment %}
+                {% # theme-check-disable %}
+                {%- assign cart_qty = cart | item_count_for_variant: product.selected_or_first_available_variant.id -%}
+                {% # theme-check-enable %}
+                <label class="quantity__label form__label" for="Quantity-{{ section.id }}">
+                  {{ 'products.product.quantity.label' | t }}
+                  <span class="quantity__rules-cart no-js-hidden">
+                    <span class="loading-overlay hidden">
+                      <span class="loading-overlay__spinner">
+                        <svg
+                          aria-hidden="true"
+                          focusable="false"
+                          class="spinner"
+                          viewBox="0 0 66 66"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+                        </svg>
+                      </span>
+                    </span>
+                    <span>({{- 'products.product.quantity.in_cart_html' | t: quantity: cart_qty -}})</span>
+                  </span>
+                </label>
+               
+                  <button data-role='decrement' class="quantity__button no-js-hidden" name="minus" type="button">
+                   
+                    {% render 'icons' icon:'icon-minus' %}
+                  </button>
+                  <input data-role='quantity'
+                    class="quantity__input"
+                    type="number"
+                    name="quantity"
+                    id="Quantity-{{ section.id }}"
+                    data-cart-quantity="{{ cart_qty }}"
+                    data-min="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
+                    min="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
+                    {% if product.selected_or_first_available_variant.quantity_rule.max != null %}
+                      data-max="{{ product.selected_or_first_available_variant.quantity_rule.max }}"
+                      max="{{ product.selected_or_first_available_variant.quantity_rule.max }}"
+                    {% endif %}
+                    step="{{ product.selected_or_first_available_variant.quantity_rule.increment }}"
+                    value="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
+                    form="{{ product_form_id }}"
+                  />
+                  <button data-role='increment' class="quantity__button no-js-hidden" name="plus" type="button">
+                   
+                    {% render 'icons' icon:'icon-plus' %}
+                  </button>
+              
+                
+              </div>
+              <button type="button" id="addProductToCart" data-role='addToCart'>Add to cart</button>
+              <script type="application/json" data-role="product-data">
+              {{ product.variants | json }}
+           </script>
+      
+       
+      </div>
+    </div>
+   
+  </div>
+  </product-listing>
+  </section>
+
+{% schema %}
+      {
+    "name": "Section name",
+    "settings": []
+  }
+{% endschema %}

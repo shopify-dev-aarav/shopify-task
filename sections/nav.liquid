@@ -1,0 +1,36 @@
+
+
+
+{%- assign choose_collection_page_link = section.settings.choose_collection_page_link -%}
+{%- assign choose_collection_page_link_products = choose_collection_page_link.products -%}
+{%- assign choose_product_link = section.settings.choose_product_link -%}
+<nav> 
+<a href="/">Home</a> 
+<a href="{{ choose_collection_page_link.url }}">collection Page</a>
+<a href="{{ choose_product_link.url }}">Product Page</a>
+</nav>
+{% schema %}
+  {
+  "name": "Code In Shopify Section",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "choose_collection_page_link",
+      "label": "choose collection page link"
+    },
+    {
+      "type": "product",
+      "id": "choose_product_link",
+      "label": "choose product link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Code In Shopify Section"
+    }
+  ]
+}  
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}

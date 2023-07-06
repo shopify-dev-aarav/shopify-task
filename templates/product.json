@@ -1,8 +1,12 @@
 {
   "sections": {
     "main": {
-      "type": "hello-world"
+      "type": "main-product" 
     }
+   
   },
-  "order": ["main"]
+  "order": [
+    "main"
+   
+  ]
 }

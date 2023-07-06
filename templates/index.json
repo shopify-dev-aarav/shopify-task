@@ -3,7 +3,6 @@
     "main": {
       "type": "hello-world",
       "settings": {
-        "heading": "Welcome to Adastra ✨"
       }
     }
   },
